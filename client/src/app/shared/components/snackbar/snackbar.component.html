@@ -1,0 +1,10 @@
+<div
+  *ngIf="snackbarService.shown"
+  class="flex justify-center items-center fixed w-full mb-3 bottom-0 left-0 z-50"
+>
+  <div
+    class="w-2/3 bg-red-500 font-bold text-white rounded-sm shadow-lg text-center py-3 px-3"
+  >
+    {{ snackbarService.content }}
+  </div>
+</div>

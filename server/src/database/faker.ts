@@ -1,7 +1,41 @@
 import { PlateInfo } from './model';
 
-const names = ['Adomas', 'Jonas', 'George', 'Gediminas', 'Vytautas'];
-const lastnames = ['Jasikevicius', 'Adomaitis', 'Jonaitis', 'Markunas'];
+const names = [
+  'Adomas',
+  'Jonas',
+  'George',
+  'Gediminas',
+  'Vytautas',
+  'Paulius',
+  'Saulius',
+  'Giedrius',
+  'Sarunas',
+  'Mykolas',
+  'Augustas',
+  'Augustinas',
+  'Rytis',
+  'Gytis',
+  'Rimvydas',
+  'Laurynas',
+  'Lukas',
+  'Gintaras',
+];
+const lastnames = [
+  'Jasikevicius',
+  'Adomaitis',
+  'Jonaitis',
+  'Markunas',
+  'Balkus',
+  'Launius',
+  'Jaraminas',
+  'Mickevicius',
+  'Pinkevicius',
+  'Skidzevicius',
+  'Spitrys',
+  'Savickas',
+  'Kacinskas',
+  'Lunskis',
+];
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const randomUpTo = (max: number) => Math.floor(Math.random() * max);
@@ -13,10 +47,9 @@ const randomPlate = () => {
 };
 const createRandomPlates = (entriesNumber: number) => {
   const plates: string[] = [];
-  for (let i = 0; i < entriesNumber; i++) {
+  while (plates.length < entriesNumber) {
     const plate = randomPlate();
     if (plates.includes(plate)) {
-      entriesNumber++;
       continue;
     }
     plates.push(plate);
@@ -24,8 +57,8 @@ const createRandomPlates = (entriesNumber: number) => {
   return plates;
 };
 const createRandomFullName = () =>
-  `${names[randomUpTo(names.length - 1)]} ${
-    lastnames[randomUpTo(lastnames.length - 1)]
+  `${names[randomUpTo(names.length)]} ${
+    lastnames[randomUpTo(lastnames.length)]
   }`;
 
 export const createFakeData = (entriesNumber: number): PlateInfo[] => {

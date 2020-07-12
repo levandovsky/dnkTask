@@ -1,0 +1,43 @@
+<form [formGroup]="plateInfoGroup">
+  <div class="mb-3">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="plate_nr">
+      Plate number
+    </label>
+    <input
+      [class.invalid]="plateInfoGroup.get('plate').invalid"
+      name="plate_nr"
+      class="input"
+      type="text"
+      formControlName="plate"
+    />
+  </div>
+  <div class="mb-3">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="owner">
+      Owner name and lastname
+    </label>
+    <input
+      [class.invalid]="plateInfoGroup.get('owner').invalid"
+      name="owner"
+      class="input"
+      type="text"
+      formControlName="owner"
+    />
+  </div>
+  <div class="flex justify-between">
+    <div>
+      <button
+        [disabled]="plateInfoGroup.invalid"
+        id="save-button"
+        class="btn btn-success"
+        (click)="updateOwner()"
+      >
+        Save
+      </button>
+    </div>
+    <div>
+      <button *ngIf="showDelete" class="btn btn-danger" (click)="deletePlate()">
+        Delete
+      </button>
+    </div>
+  </div>
+</form>

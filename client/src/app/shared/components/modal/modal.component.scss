@@ -1,0 +1,12 @@
+.close {
+  top: -5px;
+  right: 5px;
+
+  &:active {
+    outline: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}

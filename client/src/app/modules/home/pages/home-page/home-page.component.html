@@ -1,0 +1,57 @@
+<div class="w-full mb-2">
+  <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
+    Search
+  </label>
+  <div class="flex">
+    <input
+      [formControl]="searchControl"
+      class="input mr-2 w-2/3"
+      type="text"
+      name="search"
+    />
+    <button class="btn btn-primary" type="button" (click)="findPlates()">
+      Search
+    </button>
+  </div>
+</div>
+<div class="mb-2">
+  <button class="btn btn-success w-full" (click)="showPlateForm(add_group)">
+    Add
+  </button>
+</div>
+<div class="w-full">
+  <div class="text-lg font-bold">{{ plates.length }} results:</div>
+  <div class="flex mb-3">
+    <div
+      class="shadow-sm rounded-sm bg-white px-4 py-3 cursor-pointer"
+      *ngFor="let page of pages"
+      [class.active]="currentPage === page"
+      (click)="changePage(page)"
+    >
+      {{ page }}
+    </div>
+  </div>
+  <app-plate-card
+    *ngFor="let item of paginatedPlates"
+    [plateInfo]="item"
+    (plateUpdate)="updatePlates()"
+  >
+  </app-plate-card>
+  <div class="flex">
+    <div
+      class="shadow-sm rounded-sm bg-white px-4 py-3 cursor-pointer"
+      *ngFor="let page of pages"
+      [class.active]="currentPage === page"
+      (click)="changePage(page)"
+    >
+      {{ page }}
+    </div>
+  </div>
+</div>
+
+<ng-template #add_group>
+  <app-plate-info-group
+    (update)="addPlate()"
+    [formGroup]="addGroup"
+  ></app-plate-info-group>
+</ng-template>

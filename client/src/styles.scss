@@ -1,1 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/tailwindcss/base.css";
+@import "../node_modules/tailwindcss/components.css";
+@import "../node_modules/tailwindcss/utilities.css";
+
+.btn {
+  @apply font-bold py-2 px-4 rounded;
+
+  &:disabled {
+    @apply bg-gray-400 pointer-events-none cursor-not-allowed;
+  }
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white;
+}
+
+.btn-success {
+  @apply bg-green-500 text-white;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white;
+}
+
+.input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight;
+
+  &.invalid {
+    @apply border border-solid border-red-500;
+  }
+}

@@ -1,0 +1,34 @@
+<div class="bg-white mb-2 p-4 rounded shadow-lg card sm:min-w-full">
+  <div class="flex flex-row justify-between items-center">
+    <div>
+      <label class="text-xs text-gray-600">Plate</label>
+      <h3 class="font-bald text-xl">
+        {{ plateInfo.plate }}
+      </h3>
+    </div>
+    <div>
+      <label class="text-xs text-gray-600">Owner</label>
+      <p class="font-medium">
+        {{ plateInfo.owner }}
+      </p>
+    </div>
+  </div>
+  <div>
+    <button
+      id="edit-button"
+      class="btn btn-primary w-full mt-5"
+      (click)="handleEdit(modal_content)"
+    >
+      Edit
+    </button>
+  </div>
+</div>
+
+<ng-template #modal_content>
+  <app-plate-info-group
+    [showDelete]="true"
+    (update)="updateOwner()"
+    (delete)="deletePlate()"
+    [formGroup]="plateInfoGroup"
+  ></app-plate-info-group>
+</ng-template>

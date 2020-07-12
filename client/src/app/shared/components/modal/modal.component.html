@@ -1,0 +1,22 @@
+<div
+  *ngIf="modalService.open"
+  (click)="handleClick($event)"
+  id="overlay"
+  class="w-screen min-w-full h-screen min-h-full bg-black bg-opacity-50 z-20 fixed top-0 left-0 flex justify-center items-center"
+>
+  <div
+    id="content"
+    class="relative block bg-white rounded w-1/2 max-w-lg p-4 z-50"
+  >
+    <button
+      type="button"
+      id="close-button"
+      class="close absolute"
+      aria-label="Close"
+      (click)="modalService.hideModal()"
+    >
+      <span class="text-3xl" aria-hidden="true">&times;</span>
+    </button>
+    <ng-container *ngTemplateOutlet="modalService.template"></ng-container>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+import { Component, OnInit, TemplateRef } from "@angular/core";
+import { PlatesApiService } from "src/app/core/services/plates-api/plates-api.service";
+import PlateInfo from "src/app/shared/models/PlateInfo";
+import { ActivatedRoute } from "@angular/router";
+import { ModalService } from "src/app/shared/components/modal/service/modal.service";
+import { FormBuilder } from "@angular/forms";
+import { PlateInfoGroup } from "src/app/shared/components/plate-info-group/plate-info-group.component";
+import { finalize, filter, map } from "rxjs/operators";
+@Component({
+  templateUrl: "./home-page.component.html",
+  styleUrls: ["./home-page.component.scss"],
+})
+export class HomePageComponent {
+  plates: PlateInfo[];
+  paginatedPlates: PlateInfo[];
+  itemsPerPage = 25;
+  startIndex = 0;
+  currentPage = 1;
+
+  addGroup = PlateInfoGroup(this.formBuilder);
+  searchControl = this.formBuilder.control(null);
+
+  constructor(
+    private route: ActivatedRoute,
+    private platesApi: PlatesApiService,
+    private modalService: ModalService,
+    private formBuilder: FormBuilder
+  ) {
+    this.route.data.subscribe((data) => {
+      this.plates = data.plates;
+      this.paginatedPlates = [...this.plates].slice(
+        this.startIndex,
+        this.itemsPerPage
+      );
+    });
+  }
+
+  updatePlates() {
+    const sub = this.platesApi.plates$.subscribe((value) => {
+      this.plates = value;
+      sub.unsubscribe();
+    });
+  }
+
+  showPlateForm(template: TemplateRef<any>) {
+    this.modalService.showModal(template);
+  }
+
+  addPlate() {
+    if (this.addGroup.valid) {
+      const sub = this.platesApi
+        .addPlate(this.addGroup.getRawValue())
+        .pipe(
+          finalize(() => {
+            this.addGroup.reset();
+            sub.unsubscribe();
+          })
+        )
+        .subscribe((value) => {
+          this.updatePlates();
+          this.modalService.hideModal();
+        });
+    }
+  }
+
+  findPlates() {
+    const sub = this.platesApi.plates$
+      .pipe(
+        map((plates) =>
+          plates.filter((plateInfo) =>
+            this.searchControl.value
+              ? plateInfo.plate.includes(
+                  String(this.searchControl.value).toUpperCase()
+                )
+              : !!plateInfo.plate
+          )
+        ),
+        finalize(() => {
+          sub.unsubscribe();
+        })
+      )
+      .subscribe((value) => (this.plates = value));
+  }
+
+  get pages() {
+    return [...Array(Math.ceil(this.plates.length / this.itemsPerPage))].map(
+      (_, index) => index + 1
+    );
+  }
+
+  changePage(pageNumber: number) {
+    this.currentPage = pageNumber;
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    this.paginatedPlates = [...this.plates].slice(
+      startIndex,
+      startIndex + this.itemsPerPage
+    );
+  }
+}

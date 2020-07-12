@@ -1,0 +1,41 @@
+import { Injectable } from "@angular/core";
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpErrorResponse,
+} from "@angular/common/http";
+import { Observable, EMPTY, interval, timer } from "rxjs";
+import { catchError, timeout, tap, finalize } from "rxjs/operators";
+import { SnackbarService } from "src/app/shared/components/snackbar/service/snackbar.service";
+
+@Injectable({
+  providedIn: "root",
+})
+export class HttpErrorInterceptorService implements HttpInterceptor {
+  constructor(private snackbarService: SnackbarService) {}
+  intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.error instanceof Error) {
+          this.snackbarService.showSnackbar("Something went wrong...");
+          console.error("An error occurred:", error.error.message);
+          timer(5000).subscribe(() => this.snackbarService.hideSnackbar());
+        } else {
+          this.snackbarService.showSnackbar("Something went wrong...");
+          console.error(
+            `Backend returned code ${error.status}, body was: ${JSON.stringify(
+              error.error
+            )}`
+          );
+          timer(5000).subscribe(() => this.snackbarService.hideSnackbar());
+        }
+        return EMPTY;
+      })
+    );
+  }
+}
