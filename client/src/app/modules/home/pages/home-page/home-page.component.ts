@@ -1,17 +1,17 @@
-import { Component, OnInit, TemplateRef } from "@angular/core";
+import { Component, OnInit, TemplateRef, OnDestroy } from "@angular/core";
 import { PlatesApiService } from "src/app/core/services/plates-api/plates-api.service";
 import PlateInfo from "src/app/shared/models/PlateInfo";
 import { ActivatedRoute } from "@angular/router";
 import { ModalService } from "src/app/shared/components/modal/service/modal.service";
 import { FormBuilder } from "@angular/forms";
 import { PlateInfoGroup } from "src/app/shared/components/plate-info-group/plate-info-group.component";
-import { finalize, filter, map } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { Subscription } from "rxjs";
 @Component({
   templateUrl: "./home-page.component.html",
   styleUrls: ["./home-page.component.scss"],
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnDestroy {
   plates: PlateInfo[];
   paginatedPlates: PlateInfo[];
   itemsPerPage = 25;
@@ -59,11 +59,13 @@ export class HomePageComponent {
   addPlate() {
     if (this.addGroup.valid) {
       this.subscription.add(
-        this.platesApi.addPlate(this.addGroup.getRawValue()).subscribe(() => {
-          this.updatePlates();
-          this.modalService.hideModal();
-          this.addGroup.reset();
-        })
+        this.platesApi
+          .addPlate(this.addGroup.getRawValue())
+          .subscribe(() => {
+            this.updatePlates();
+            this.modalService.hideModal();
+            this.addGroup.reset();
+          })
       );
       this.subscription.unsubscribe();
     }
@@ -88,7 +90,6 @@ export class HomePageComponent {
           this.changePage(1);
         })
     );
-    this.subscription.unsubscribe();
   }
 
   get pages() {
@@ -102,5 +103,9 @@ export class HomePageComponent {
     this.startIndex = (this.currentPage - 1) * this.itemsPerPage;
     this.endIndex = this.startIndex + this.itemsPerPage;
     this.paginatePlates();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

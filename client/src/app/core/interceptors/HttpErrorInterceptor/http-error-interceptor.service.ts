@@ -6,8 +6,8 @@ import {
   HttpEvent,
   HttpErrorResponse,
 } from "@angular/common/http";
-import { Observable, EMPTY, interval, timer } from "rxjs";
-import { catchError, timeout, tap, finalize } from "rxjs/operators";
+import { Observable, EMPTY, timer } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { SnackbarService } from "src/app/shared/components/snackbar/service/snackbar.service";
 import { Router } from '@angular/router';
 

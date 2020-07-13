@@ -5,13 +5,13 @@ import {
   TemplateRef,
   Output,
   EventEmitter,
+  OnDestroy,
 } from "@angular/core";
 import PlateInfo from "src/app/shared/models/PlateInfo";
 import { ModalService } from "src/app/shared/components/modal/service/modal.service";
 import { FormBuilder } from "@angular/forms";
 import { PlatesApiService } from "src/app/core/services/plates-api/plates-api.service";
 import { Subscription } from "rxjs";
-import { finalize } from "rxjs/operators";
 import { PlateInfoGroup } from "src/app/shared/components/plate-info-group/plate-info-group.component";
 
 @Component({
@@ -19,7 +19,7 @@ import { PlateInfoGroup } from "src/app/shared/components/plate-info-group/plate
   templateUrl: "./plate-card.component.html",
   styleUrls: ["./plate-card.component.scss"],
 })
-export class PlateCardComponent implements OnInit {
+export class PlateCardComponent implements OnInit, OnDestroy {
   @Input() plateInfo: PlateInfo;
   @Output() plateUpdate = new EventEmitter();
   plateInfoGroup = PlateInfoGroup(this.formBuilder, { disablePlate: true });
@@ -67,5 +67,11 @@ export class PlateCardComponent implements OnInit {
         )
       );
     }
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.subscription.unsubscribe();
   }
 }
