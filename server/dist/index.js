@@ -65,8 +65,8 @@ const addPlate = (req, res) => {
         return;
     }
     if (dublicatePlate) {
-        res.sendStatus(409);
-        // res.json({ dublicatePlate: true, owner: dublicatePlate.owner });
+        res.status(409);
+        res.json({ dublicatePlate: true, owner: dublicatePlate.owner });
         return;
     }
     plateInfoArr.push(newPlate);

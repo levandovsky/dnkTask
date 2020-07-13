@@ -6,6 +6,7 @@ import { ModalService } from "src/app/shared/components/modal/service/modal.serv
 import { FormBuilder } from "@angular/forms";
 import { PlateInfoGroup } from "src/app/shared/components/plate-info-group/plate-info-group.component";
 import { finalize, filter, map } from "rxjs/operators";
+import { Subscription } from "rxjs";
 @Component({
   templateUrl: "./home-page.component.html",
   styleUrls: ["./home-page.component.scss"],
@@ -15,7 +16,9 @@ export class HomePageComponent {
   paginatedPlates: PlateInfo[];
   itemsPerPage = 25;
   startIndex = 0;
+  endIndex = this.itemsPerPage;
   currentPage = 1;
+  private readonly subscription = new Subscription();
 
   addGroup = PlateInfoGroup(this.formBuilder);
   searchControl = this.formBuilder.control(null);
@@ -26,20 +29,27 @@ export class HomePageComponent {
     private modalService: ModalService,
     private formBuilder: FormBuilder
   ) {
-    this.route.data.subscribe((data) => {
-      this.plates = data.plates;
-      this.paginatedPlates = [...this.plates].slice(
-        this.startIndex,
-        this.itemsPerPage
-      );
-    });
+    this.subscription.add(
+      this.route.data.subscribe((data) => {
+        this.plates = data.plates;
+        this.changePage(1);
+      })
+    );
+  }
+
+  paginatePlates() {
+    this.paginatedPlates = [...this.plates].slice(
+      this.startIndex,
+      this.endIndex
+    );
   }
 
   updatePlates() {
-    const sub = this.platesApi.plates$.subscribe((value) => {
-      this.plates = value;
-      sub.unsubscribe();
-    });
+    this.subscription.add(
+      this.platesApi.plates$.subscribe((value) => {
+        this.plates = value;
+      })
+    );
   }
 
   showPlateForm(template: TemplateRef<any>) {
@@ -48,38 +58,37 @@ export class HomePageComponent {
 
   addPlate() {
     if (this.addGroup.valid) {
-      const sub = this.platesApi
-        .addPlate(this.addGroup.getRawValue())
-        .pipe(
-          finalize(() => {
-            this.addGroup.reset();
-            sub.unsubscribe();
-          })
-        )
-        .subscribe((value) => {
+      this.subscription.add(
+        this.platesApi.addPlate(this.addGroup.getRawValue()).subscribe(() => {
           this.updatePlates();
           this.modalService.hideModal();
-        });
+          this.addGroup.reset();
+        })
+      );
+      this.subscription.unsubscribe();
     }
   }
 
   findPlates() {
-    const sub = this.platesApi.plates$
-      .pipe(
-        map((plates) =>
-          plates.filter((plateInfo) =>
-            this.searchControl.value
-              ? plateInfo.plate.includes(
-                  String(this.searchControl.value).toUpperCase()
-                )
-              : !!plateInfo.plate
+    this.subscription.add(
+      this.platesApi.plates$
+        .pipe(
+          map((plates) =>
+            plates.filter((plateInfo) =>
+              this.searchControl.value
+                ? plateInfo.plate.includes(
+                    String(this.searchControl.value).toUpperCase()
+                  )
+                : !!plateInfo.plate
+            )
           )
-        ),
-        finalize(() => {
-          sub.unsubscribe();
+        )
+        .subscribe((value) => {
+          this.plates = value;
+          this.changePage(1);
         })
-      )
-      .subscribe((value) => (this.plates = value));
+    );
+    this.subscription.unsubscribe();
   }
 
   get pages() {
@@ -90,10 +99,8 @@ export class HomePageComponent {
 
   changePage(pageNumber: number) {
     this.currentPage = pageNumber;
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    this.paginatedPlates = [...this.plates].slice(
-      startIndex,
-      startIndex + this.itemsPerPage
-    );
+    this.startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    this.endIndex = this.startIndex + this.itemsPerPage;
+    this.paginatePlates();
   }
 }

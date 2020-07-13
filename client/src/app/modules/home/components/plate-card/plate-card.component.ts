@@ -42,38 +42,30 @@ export class PlateCardComponent implements OnInit {
   }
 
   updateOwner() {
-    const sub = this.platesApi
-      .updatePlateOwner(this.plateInfoGroup.getRawValue() as PlateInfo)
-      .pipe(
-        finalize(() => {
-          sub.unsubscribe();
-        })
-      )
-      .subscribe(
-        (value) => {
-          this.plateUpdate.emit();
-          this.modalService.hideModal();
-        },
-        (err) => console.error(err)
-      );
-  }
-
-  deletePlate() {
-    if (confirm("Are you sure you want to delete this plate?")) {
-      const sub = this.platesApi
-        .deletePlate(this.plateInfo.plate)
-        .pipe(
-          finalize(() => {
-            sub.unsubscribe();
-          })
-        )
+    this.subscription.add(
+      this.platesApi
+        .updatePlateOwner(this.plateInfoGroup.getRawValue() as PlateInfo)
         .subscribe(
-          (value) => {
+          () => {
             this.plateUpdate.emit();
             this.modalService.hideModal();
           },
           (err) => console.error(err)
-        );
+        )
+    );
+  }
+
+  deletePlate() {
+    if (confirm("Are you sure you want to delete this plate?")) {
+      this.subscription.add(
+        this.platesApi.deletePlate(this.plateInfo.plate).subscribe(
+          () => {
+            this.plateUpdate.emit();
+            this.modalService.hideModal();
+          },
+          (err) => console.error(err)
+        )
+      );
     }
   }
 }

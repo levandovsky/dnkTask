@@ -2,10 +2,12 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { PlateCardComponent } from "./plate-card.component";
 import { ModalService } from "src/app/shared/components/modal/service/modal.service";
-import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
+import { ReactiveFormsModule, FormBuilder, FormGroupDirective } from "@angular/forms";
 import { PlatesApiService } from "src/app/core/services/plates-api/plates-api.service";
 import { ModalComponent } from "src/app/shared/components/modal/modal.component";
 import { of } from "rxjs";
+import { PlateInfoGroupComponent } from 'src/app/shared/components/plate-info-group/plate-info-group.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe("PlateCardComponent", () => {
   let component: PlateCardComponent;
@@ -19,13 +21,13 @@ describe("PlateCardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [PlateCardComponent, ModalComponent],
-      imports: [ReactiveFormsModule],
+      declarations: [PlateCardComponent, ModalComponent, PlateInfoGroupComponent],
+      imports: [ReactiveFormsModule, RouterTestingModule],
       providers: [
         {
           provide: PlatesApiService,
           useValue: { updatePlateOwner: jest.fn(() => of(true)) },
-        },
+        }
       ],
     }).compileComponents();
   }));
@@ -70,7 +72,7 @@ describe("PlateCardComponent", () => {
     editBtn.click();
     modalFixure.detectChanges();
     deleteBtn = modalFixure.nativeElement.querySelector("#delete-button");
-    deleteBtn.click();
-    expect(deleteSpy).toHaveBeenCalled();
+    deleteBtn.click()
+    expect(deleteSpy).toHaveBeenCalled()
   });
 });

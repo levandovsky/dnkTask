@@ -1,16 +1,31 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { PlateInfoGroupComponent } from './plate-info-group.component';
+import {
+  PlateInfoGroupComponent,
+  PlateInfoGroup,
+} from "./plate-info-group.component";
+import {
+  ReactiveFormsModule,
+  FormGroupDirective,
+  FormGroup,
+  FormBuilder,
+} from "@angular/forms";
 
-describe('PlateInfoGroupComponent', () => {
+describe("PlateInfoGroupComponent", () => {
   let component: PlateInfoGroupComponent;
   let fixture: ComponentFixture<PlateInfoGroupComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlateInfoGroupComponent ]
-    })
-    .compileComponents();
+      imports: [ReactiveFormsModule],
+      declarations: [PlateInfoGroupComponent],
+      providers: [
+        {
+          provide: FormGroupDirective,
+          useValue: { control: PlateInfoGroup(new FormBuilder()) },
+        },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +34,7 @@ describe('PlateInfoGroupComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

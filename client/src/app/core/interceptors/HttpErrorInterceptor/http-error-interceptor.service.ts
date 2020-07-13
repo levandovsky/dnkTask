@@ -9,12 +9,13 @@ import {
 import { Observable, EMPTY, interval, timer } from "rxjs";
 import { catchError, timeout, tap, finalize } from "rxjs/operators";
 import { SnackbarService } from "src/app/shared/components/snackbar/service/snackbar.service";
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: "root",
 })
 export class HttpErrorInterceptorService implements HttpInterceptor {
-  constructor(private snackbarService: SnackbarService) {}
+  constructor(private snackbarService: SnackbarService, private router: Router) {}
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -27,6 +28,9 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
           timer(5000).subscribe(() => this.snackbarService.hideSnackbar());
         } else {
           this.snackbarService.showSnackbar("Something went wrong...");
+          if (error.status === 504) {
+            this.router.navigate(["bad-request"])
+          }
           console.error(
             `Backend returned code ${error.status}, body was: ${JSON.stringify(
               error.error
