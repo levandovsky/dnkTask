@@ -48,6 +48,7 @@ export class HomePageComponent implements OnDestroy {
     this.subscription.add(
       this.platesApi.plates$.subscribe((value) => {
         this.plates = value;
+        this.paginatePlates();
       })
     );
   }
@@ -67,7 +68,6 @@ export class HomePageComponent implements OnDestroy {
             this.addGroup.reset();
           })
       );
-      this.subscription.unsubscribe();
     }
   }
 
